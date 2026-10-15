@@ -1,178 +1,225 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>OT Design Review MVP</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OT Clinical Design Board</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="app">
-  <aside class="sidebar">
-    <div class="brand">OT DESIGN REVIEW</div>
-    <div class="nav">
-      <button class="nav-btn active" data-step="0"><span class="num">01</span><span class="label">SNAPSHOT</span></button>
-      <button class="nav-btn" data-step="1"><span class="num">02</span><span class="label">CLINICAL</span></button>
-      <button class="nav-btn" data-step="2"><span class="num">03</span><span class="label">USER</span></button>
-      <button class="nav-btn" data-step="3"><span class="num">04</span><span class="label">DESIGN</span></button>
-      <button class="nav-btn" data-step="4"><span class="num">05</span><span class="label">RISK</span></button>
-      <button class="nav-btn" data-step="5"><span class="num">06</span><span class="label">REVIEW</span></button>
-      <button class="nav-btn" data-step="6"><span class="num">PDF</span><span class="label">PREVIEW</span></button>
+<header class="topbar">
+  <div>
+    <div class="brand">OT CLINICAL DESIGN BOARD</div>
+    <div class="subtitle">Student Worksheet · Expert Design Review</div>
+  </div>
+  <div class="top-actions">
+    <span id="saveState">로컬 자동저장</span>
+    <button class="btn" id="newProjectBtn">+ 새 프로젝트</button>
+  </div>
+</header>
+
+<nav class="mode-nav">
+  <button class="mode-btn active" data-view="board">BOARD</button>
+  <button class="mode-btn" data-view="student">STUDENT WORKSPACE</button>
+  <button class="mode-btn" data-view="expert">EXPERT REVIEW</button>
+</nav>
+
+<main>
+  <section class="view active" id="boardView">
+    <div class="hero">
+      <div class="eyebrow">PROJECT BOARD</div>
+      <h1>Design first.<br>Review next.</h1>
+      <p>학생은 임상적 설계를 정리하고, 전문가는 제출된 내용을 다시 작성하지 않고 판단과 방향을 제시합니다.</p>
     </div>
-  </aside>
+    <div class="board-stats" id="boardStats"></div>
+    <div class="section-head">
+      <div><h2>프로젝트</h2><p>자문 요청 프로젝트와 진행 상태를 한눈에 확인합니다.</p></div>
+      <div class="filters" id="boardFilters">
+        <button class="filter active" data-filter="all">전체</button>
+        <button class="filter" data-filter="자문 요청">자문 요청</button>
+        <button class="filter" data-filter="피드백 완료">피드백 완료</button>
+        <button class="filter" data-filter="작성 중">작성 중</button>
+      </div>
+    </div>
+    <div class="project-grid" id="projectGrid"></div>
+  </section>
 
-  <main class="main">
-    <div class="topbar">
-      <div class="doc-title">전문가 자문형 Design Review Tool · MVP</div>
-      <div class="save-state" id="saveState">자동 저장 준비됨</div>
+  <section class="view" id="studentView">
+    <div class="workspace-head">
+      <button class="text-btn" data-go="board">← Board</button>
+      <div class="project-switch"><label>프로젝트</label><select id="studentProjectSelect"></select></div>
+      <div class="status-pill" id="studentStatusPill">작성 중</div>
     </div>
 
-    <section class="page active" data-page="0">
-      <div class="kicker">01 · PROJECT SNAPSHOT</div>
-      <h1>WHAT are we trying to solve?</h1>
-      <p class="lead">제품 설명보다 먼저, 누구의 어떤 작업수행 문제를 해결하려는지 정리합니다.</p>
-      <div class="section grid-2">
-        <div class="field"><label>프로젝트명</label><input type="text" data-key="projectName" placeholder="예: 필기도구 사용 지원 교구"></div>
-        <div class="field"><label>팀명 / 학생명</label><input type="text" data-key="teamName"></div>
-        <div class="field"><label>리뷰 일자</label><input type="date" data-key="reviewDate"></div>
-        <div class="field"><label>현재 개발 단계</label><select data-key="stage"><option value="">선택</option><option>아이디어</option><option>기획</option><option>초기 프로토타입</option><option>기능 프로토타입</option><option>최종 제작</option></select></div>
-      </div>
-      <div class="section">
-        <div class="field"><label>주요 사용자</label><input type="text" data-key="targetUser" placeholder="예: 초등학교 저학년, 양손 협응에 어려움이 있는 아동"></div>
-        <div class="field"><label>주요 사용 환경</label><input type="text" data-key="useEnvironment" placeholder="예: 치료실, 교실, 가정"></div>
-        <div class="field"><label>해결하려는 작업수행 문제</label><textarea data-key="problem" placeholder="대상자는 어떤 작업을 수행할 때 어떤 어려움을 경험합니까?"></textarea></div>
-        <div class="field"><label>제안한 해결 방법</label><textarea data-key="solution" placeholder="이 교구는 그 문제를 어떤 방식으로 지원합니까?"></textarea></div>
-      </div>
-    </section>
+    <div class="hero compact">
+      <div class="eyebrow">CLINICAL DESIGN WORKSHEET</div>
+      <h1>Think through<br>your design.</h1>
+      <p>이 워크시트는 학생이 자신의 교구 개발 논리를 정리하기 위한 작업 공간입니다.</p>
+    </div>
 
-    <section class="page" data-page="1">
-      <div class="kicker">02 · CLINICAL DESIGN REVIEW</div>
-      <h1>WHY does this make clinical sense?</h1>
-      <p class="lead">기능훈련이 아니라 작업수행과 참여의 변화로 연결되는지 검토합니다.</p>
-      <div class="section">
-        <div class="field"><label>핵심 작업수행 문제</label><textarea data-key="occupationalProblem"></textarea></div>
-        <div class="field"><label>전문가 의견</label><textarea data-key="clinicalComment"></textarea></div>
-        <details><summary>생각해볼 질문</summary><p class="helper">실제 작업에서 나타나는 문제인가? 기능 저하 자체가 목표가 되지는 않았는가? 어떤 환경에서 문제가 가장 명확한가?</p></details>
-      </div>
-      <div class="section">
-        <h2>PEO Review</h2>
-        <div class="grid-3">
-          <div><label>PERSON</label><textarea data-key="peoPerson" placeholder="운동, 감각, 인지, 동기, 의사소통 등"></textarea></div>
-          <div><label>ENVIRONMENT</label><textarea data-key="peoEnvironment" placeholder="물리·사회 환경, 공간, 시간, 보조자 등"></textarea></div>
-          <div><label>OCCUPATION</label><textarea data-key="peoOccupation" placeholder="실제 작업, 수행 단계, 성공 기준 등"></textarea></div>
-        </div>
-        <div class="field" style="margin-top:16px"><label>이 교구가 주로 변화시키는 영역</label><div class="chips" id="peoChips"></div></div>
-      </div>
-      <div class="section">
-        <h2>Intervention Logic</h2>
-        <div class="logic">
-          <div class="logic-row"><div class="logic-key">PROBLEM</div><input type="text" data-key="logicProblem"></div>
-          <div class="logic-row"><div class="logic-key">TOOL FUNCTION</div><input type="text" data-key="logicFunction"></div>
-          <div class="logic-row"><div class="logic-key">TARGET PERFORMANCE</div><input type="text" data-key="logicPerformance"></div>
-          <div class="logic-row"><div class="logic-key">EXPECTED CHANGE</div><input type="text" data-key="logicChange"></div>
-          <div class="logic-row"><div class="logic-key">OCCUPATION</div><input type="text" data-key="logicOccupation"></div>
-        </div>
-      </div>
-    </section>
+    <div class="student-layout">
+      <aside class="step-nav" id="studentStepNav">
+        <button class="step-btn active" data-step="0"><b>01</b> SNAPSHOT</button>
+        <button class="step-btn" data-step="1"><b>02</b> CLINICAL</button>
+        <button class="step-btn" data-step="2"><b>03</b> USER</button>
+        <button class="step-btn" data-step="3"><b>04</b> DESIGN</button>
+        <button class="step-btn" data-step="4"><b>05</b> RISK</button>
+        <button class="step-btn" data-step="5"><b>06</b> SUBMIT</button>
+      </aside>
 
-    <section class="page" data-page="2">
-      <div class="kicker">03 · USER & CONTEXT</div>
-      <h1>WHO will actually use this?</h1>
-      <p class="lead">사용자의 능력과 실제 사용 환경에서 교구가 작동할 수 있는지 확인합니다.</p>
-      <div class="section">
-        <h2>User Fit</h2>
-        <table class="rating-table"><thead><tr><th>영역</th><th>상태</th><th>전문가 메모</th></tr></thead><tbody id="userFitBody"></tbody></table>
-      </div>
-      <div class="section grid-2">
-        <div class="field"><label>사용 장소</label><input type="text" data-key="contextPlace"></div>
-        <div class="field"><label>예상 사용 시간</label><input type="text" data-key="contextDuration"></div>
-        <div class="field"><label>사용 빈도</label><input type="text" data-key="contextFrequency"></div>
-        <div class="field"><label>보조자</label><input type="text" data-key="contextHelper"></div>
-        <div class="field"><label>준비 과정</label><textarea data-key="contextSetup"></textarea></div>
-        <div class="field"><label>정리 과정</label><textarea data-key="contextCleanup"></textarea></div>
-      </div>
-      <div class="section"><div class="field"><label>실제 현장에서 사용을 방해할 수 있는 요소</label><textarea data-key="contextBarrier"></textarea></div></div>
-    </section>
+      <div class="worksheet">
+        <section class="student-step active" data-step-page="0">
+          <h2>WHAT are you trying to solve?</h2>
+          <p class="section-copy">제품보다 먼저 대상자와 작업수행 문제를 정의합니다.</p>
+          <div class="form-grid two">
+            <div class="field"><label>프로젝트명</label><input data-p="title"></div>
+            <div class="field"><label>팀명 / 학생명</label><input data-p="team"></div>
+            <div class="field"><label>개발 단계</label><select data-w="stage"><option>아이디어</option><option>기획</option><option>초기 프로토타입</option><option>기능 프로토타입</option><option>최종 제작</option></select></div>
+            <div class="field"><label>주요 사용 환경</label><input data-w="environment"></div>
+          </div>
+          <div class="field"><label>주요 사용자</label><input data-w="targetUser" placeholder="누가 이 교구를 사용합니까?"></div>
+          <div class="field"><label>해결하려는 작업수행 문제</label><textarea data-w="problem"></textarea></div>
+          <div class="field"><label>제안한 해결 방법</label><textarea data-w="solution"></textarea></div>
+        </section>
 
-    <section class="page" data-page="3">
-      <div class="kicker">04 · DESIGN & PROTOTYPE</div>
-      <h1>WHAT must work?</h1>
-      <p class="lead">핵심 기능을 선명하게 하고, 불필요한 기능과 사용 흐름의 마찰을 줄입니다.</p>
-      <div class="section grid-2">
-        <div><label>반드시 작동해야 하는 기능</label><textarea data-key="coreFunction"></textarea></div>
-        <div><label>없어도 되는 기능</label><textarea data-key="nonEssential"></textarea></div>
-      </div>
-      <div class="section">
-        <h2>Interaction Flow</h2>
-        <div id="flowRows"></div>
-      </div>
-      <div class="section">
-        <h2>Grading Strategy</h2>
-        <div class="field"><label>난이도 조절 요소</label><div class="chips" id="gradingChips"></div></div>
-        <div class="grid-3"><div><label>현재 수준</label><textarea data-key="gradingCurrent"></textarea></div><div><label>어렵게</label><textarea data-key="gradingHarder"></textarea></div><div><label>쉽게</label><textarea data-key="gradingEasier"></textarea></div></div>
-      </div>
-    </section>
+        <section class="student-step" data-step-page="1">
+          <h2>WHY does this make clinical sense?</h2>
+          <p class="section-copy">기능 자체가 아니라 실제 작업수행과 어떻게 연결되는지 설명합니다.</p>
+          <div class="field"><label>핵심 작업수행 문제</label><textarea data-w="occupationalProblem"></textarea></div>
+          <div class="form-grid three">
+            <div class="field"><label>PERSON</label><textarea data-w="peoPerson" placeholder="운동·감각·인지·동기 등"></textarea></div>
+            <div class="field"><label>ENVIRONMENT</label><textarea data-w="peoEnvironment" placeholder="물리·사회 환경, 시간, 보조자 등"></textarea></div>
+            <div class="field"><label>OCCUPATION</label><textarea data-w="peoOccupation" placeholder="실제 작업, 수행 단계, 성공 조건"></textarea></div>
+          </div>
+          <h3>Intervention Logic</h3>
+          <div class="logic-list">
+            <div><span>PROBLEM</span><input data-w="logicProblem"></div>
+            <div><span>TOOL</span><input data-w="logicTool"></div>
+            <div><span>PERFORMANCE</span><input data-w="logicPerformance"></div>
+            <div><span>CHANGE</span><input data-w="logicChange"></div>
+            <div><span>OCCUPATION</span><input data-w="logicOccupation"></div>
+          </div>
+        </section>
 
-    <section class="page" data-page="4">
-      <div class="kicker">05 · RISK & VERIFICATION</div>
-      <h1>WHERE can this fail?</h1>
-      <p class="lead">모든 문제를 적지 않습니다. 프로젝트 진행을 막을 수 있는 Critical Issue를 최대 3개만 지정합니다.</p>
-      <div id="issueCards"></div>
-      <div class="section">
-        <h2>Verification Plan</h2>
-        <div id="verificationRows"></div>
-      </div>
-    </section>
+        <section class="student-step" data-step-page="2">
+          <h2>WHO will actually use this?</h2>
+          <p class="section-copy">사용자의 능력과 실제 사용 환경을 고려합니다.</p>
+          <div class="form-grid two">
+            <div class="field"><label>운동·조작 특성</label><textarea data-w="userMotor"></textarea></div>
+            <div class="field"><label>감각·인지 특성</label><textarea data-w="userSensoryCognitive"></textarea></div>
+            <div class="field"><label>사용 장소·상황</label><textarea data-w="useContext"></textarea></div>
+            <div class="field"><label>필요한 도움</label><textarea data-w="helpNeeded"></textarea></div>
+          </div>
+          <div class="field"><label>실제 사용을 방해할 수 있는 요소</label><textarea data-w="barriers"></textarea></div>
+        </section>
 
-    <section class="page" data-page="5">
-      <div class="kicker">06 · EXPERT RECOMMENDATION</div>
-      <h1>WHAT happens next?</h1>
-      <p class="lead">판정이 아니라 다음 개발 행동을 결정합니다.</p>
-      <div class="section">
-        <h2>Project Status</h2>
-        <div class="status-options">
-          <label class="status-card"><input type="radio" name="status" value="진행"><span><strong>진행</strong><br><span class="helper">현재 방향으로 개발 지속</span></span></label>
-          <label class="status-card"><input type="radio" name="status" value="조건부 진행"><span><strong>조건부 진행</strong><br><span class="helper">일부 수정과 함께 개발 지속</span></span></label>
-          <label class="status-card"><input type="radio" name="status" value="재설계"><span><strong>재설계</strong><br><span class="helper">핵심 구조 수정 후 진행</span></span></label>
-          <label class="status-card"><input type="radio" name="status" value="추가 확인"><span><strong>추가 확인</strong><br><span class="helper">사용자·문제·근거 추가 확인</span></span></label>
+        <section class="student-step" data-step-page="3">
+          <h2>WHAT must work?</h2>
+          <p class="section-copy">핵심 기능과 난이도 조절 방식을 정리합니다.</p>
+          <div class="form-grid two">
+            <div class="field"><label>반드시 작동해야 하는 핵심 기능</label><textarea data-w="coreFunction"></textarea></div>
+            <div class="field"><label>없어도 되는 기능</label><textarea data-w="nonEssential"></textarea></div>
+          </div>
+          <div class="field"><label>사용 흐름</label><textarea data-w="interactionFlow" placeholder="준비 → 시작 → 수행 → 피드백 → 종료 → 정리"></textarea></div>
+          <div class="field"><label>난이도 조절 전략</label><textarea data-w="grading"></textarea></div>
+        </section>
+
+        <section class="student-step" data-step-page="4">
+          <h2>WHERE can this fail?</h2>
+          <p class="section-copy">현재 설계에서 예상되는 문제와 확인이 필요한 가정을 학생 관점에서 정리합니다.</p>
+          <div class="form-grid two">
+            <div class="field"><label>예상 문제 1</label><textarea data-w="risk1"></textarea></div>
+            <div class="field"><label>예상 문제 2</label><textarea data-w="risk2"></textarea></div>
+          </div>
+          <div class="field"><label>다음 제작 전에 확인하고 싶은 것</label><textarea data-w="studentCheck"></textarea></div>
+        </section>
+
+        <section class="student-step" data-step-page="5">
+          <h2>READY for review?</h2>
+          <p class="section-copy">전문가가 무엇을 봐주면 좋을지 학생이 직접 정합니다.</p>
+          <div class="submission-summary" id="submissionSummary"></div>
+          <div class="field"><label>전문가에게 확인받고 싶은 질문</label><textarea data-w="questionForExpert" placeholder="예: 실제 작업수행과의 연결이 충분한지 확인받고 싶습니다."></textarea></div>
+          <div class="submit-box">
+            <div><strong>자문 요청</strong><p>현재 워크시트의 상태를 스냅샷으로 저장해 전문가 검토 목록에 보냅니다.</p></div>
+            <button class="btn primary" id="submitReviewBtn">전문가 자문 요청</button>
+          </div>
+        </section>
+
+        <div class="step-actions">
+          <button class="btn" id="studentPrevBtn">← 이전</button>
+          <button class="btn primary" id="studentNextBtn">다음 →</button>
         </div>
       </div>
-      <div class="triad">
-        <div class="box"><div class="word">KEEP</div><div class="helper">유지해야 할 설계</div><textarea data-key="keep"></textarea></div>
-        <div class="box"><div class="word">CHANGE</div><div class="helper">우선 수정할 설계</div><textarea data-key="change"></textarea></div>
-        <div class="box"><div class="word">TEST</div><div class="helper">다음 리뷰 전 확인할 사항</div><textarea data-key="test"></textarea></div>
-      </div>
-      <div class="section">
-        <h2>Next Action</h2>
-        <div id="nextActionRows"></div>
-        <div class="field" style="margin-top:16px"><label>다음 리뷰에서 가장 먼저 확인할 질문</label><textarea data-key="nextReviewQuestion"></textarea></div>
-      </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="page" data-page="6" id="printPage">
-      <div class="kicker">PDF · PREVIEW</div>
-      <h1>REVIEW complete.</h1>
-      <p class="lead">아래 화면은 학생에게 전달할 PDF 결과물입니다. 내부 메모와 빈 항목은 최소화했습니다.</p>
-      <div class="section"><button class="btn accent" id="printBtn">PDF로 저장 / 인쇄</button> <button class="btn" id="resetBtn">새 리뷰 시작</button></div>
-      <div class="pdf-preview"><div class="sheet" id="pdfSheet"></div></div>
-    </section>
-  </main>
+  <section class="view" id="expertView">
+    <div class="workspace-head">
+      <button class="text-btn" data-go="board">← Board</button>
+      <div class="project-switch"><label>검토 프로젝트</label><select id="expertProjectSelect"></select></div>
+      <div class="status-pill expert" id="expertStatusPill">자문 요청</div>
+    </div>
 
-  <aside class="context">
-    <h3>CURRENT REVIEW</h3>
-    <div class="ctx-block"><div class="ctx-key">PROJECT</div><div class="ctx-val" id="ctxProject">—</div></div>
-    <div class="ctx-block"><div class="ctx-key">TARGET</div><div class="ctx-val" id="ctxTarget">—</div></div>
-    <div class="ctx-block"><div class="ctx-key">OCCUPATION</div><div class="ctx-val" id="ctxOccupation">—</div></div>
-    <div class="ctx-block"><div class="ctx-key">STATUS</div><div class="ctx-val" id="ctxStatus">—</div></div>
-    <div class="ctx-block"><div class="ctx-key">KEEP</div><div class="ctx-val" id="ctxKeep">—</div></div>
-    <div class="ctx-block"><div class="ctx-key">CHANGE</div><div class="ctx-val" id="ctxChange">—</div></div>
-    <div class="ctx-block"><div class="ctx-key">TEST</div><div class="ctx-val" id="ctxTest">—</div></div>
-  </aside>
-</div>
+    <div class="hero compact">
+      <div class="eyebrow">EXPERT DESIGN REVIEW</div>
+      <h1>Read. Judge.<br>Guide.</h1>
+      <p>학생의 설계를 다시 작성하지 않습니다. 핵심 판단과 다음 방향만 남깁니다.</p>
+    </div>
 
-<div class="actions">
-  <button class="btn" id="prevBtn">← 이전</button>
-  <button class="btn primary" id="nextBtn">다음 →</button>
+    <div class="review-layout">
+      <section class="submission-panel">
+        <div class="panel-title"><span>STUDENT SUBMISSION</span><small id="submissionDate">미제출</small></div>
+        <div id="expertSubmission"></div>
+      </section>
+
+      <section class="review-panel">
+        <div class="panel-title"><span>EXPERT REVIEW</span><small>판단 + 짧은 근거</small></div>
+        <div id="criteriaList"></div>
+
+        <div class="priority-section">
+          <h3>Priority Issues</h3>
+          <p>이번 단계에서 학생이 우선 해결해야 할 문제를 최대 2개만 지정합니다.</p>
+          <div class="field"><label>Priority 1</label><textarea data-r="priority1"></textarea></div>
+          <div class="field"><label>Priority 2</label><textarea data-r="priority2"></textarea></div>
+        </div>
+
+        <div class="triad">
+          <div><b>KEEP</b><span>유지할 강점</span><textarea data-r="keep"></textarea></div>
+          <div><b>CHANGE</b><span>우선 수정</span><textarea data-r="change"></textarea></div>
+          <div><b>CHECK</b><span>학생이 확인</span><textarea data-r="check"></textarea></div>
+        </div>
+
+        <div class="direction">
+          <h3>Overall Direction</h3>
+          <div class="direction-options" id="directionOptions">
+            <label><input type="radio" name="direction" value="진행"> 진행</label>
+            <label><input type="radio" name="direction" value="조건부 진행"> 조건부 진행</label>
+            <label><input type="radio" name="direction" value="재설계"> 재설계</label>
+            <label><input type="radio" name="direction" value="추가 확인"> 추가 확인</label>
+          </div>
+          <div class="field"><label>Expert Comment</label><textarea data-r="comment" placeholder="학생이 다음 행동을 이해할 수 있을 정도로만 간결하게 작성합니다."></textarea></div>
+        </div>
+
+        <div class="review-actions">
+          <button class="btn" id="printReviewBtn">PDF / 인쇄</button>
+          <button class="btn primary" id="completeReviewBtn">피드백 완료</button>
+        </div>
+      </section>
+    </div>
+
+    <section class="review-output" id="reviewOutput"></section>
+  </section>
+</main>
+
+<div class="modal hidden" id="newProjectModal">
+  <div class="modal-card">
+    <button class="modal-close" id="modalClose">×</button>
+    <div class="eyebrow">NEW PROJECT</div>
+    <h2>새 프로젝트</h2>
+    <div class="field"><label>프로젝트명</label><input id="newProjectTitle"></div>
+    <div class="field"><label>팀명 / 학생명</label><input id="newProjectTeam"></div>
+    <button class="btn primary wide" id="createProjectBtn">프로젝트 만들기</button>
+  </div>
 </div>
 
 <script src="app.js"></script>
